@@ -20,10 +20,24 @@ import {
     WHITE
 } from '../styles/Colors';
 
+import firebase from 'react-native-firebase';
+import { Product } from '../models';
+
 class HomeScreen extends Component {
+    constructor() {
+        super();
+        this.state = {
+            products: [],
+            loading: false
+        };
+
+        this.ref = firebase.firestore().collection('products');
+    }
+
     render() {
         return (
             <View style={styles.container}>
+                <Text>{this.state.products.length}</Text>
                 {this.props.products.current.length > 0 && (
                     <Text style={{ fontSize: 16, marginBottom: 8 }}>
                         Você precisa comprar{' '}
@@ -36,12 +50,12 @@ class HomeScreen extends Component {
                 <ProductList
                     card
                     data={this.props.products.current}
-                    iconType='entypo'
-                    iconName='trash'
+                    iconType="entypo"
+                    iconName="trash"
                     itemSelected={(item, index) =>
                         this.props.removeProduct(index)
                     }
-                    emptyText='Nada para comprar'
+                    emptyText="Nada para comprar"
                 />
                 <Button
                     title="ADICIONAR PRODUTO"
@@ -57,6 +71,30 @@ class HomeScreen extends Component {
             </View>
         );
     }
+
+    componentDidMount() {
+        this.unsubscribe = this.ref.onSnapshot(querySnapshot => {
+            const products = [];
+            querySnapshot.forEach(doc => {
+                products.push(new Product(doc.data().name, doc.data().price));
+            });
+            this.setState({
+                products,
+                loading: false
+            })
+        });
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onCollectionUpdate = querySnapshot => {
+        const products = [];
+        querySnapshot.forEach(doc => {
+            console.log(JSON.stringify(doc));
+        });
+    };
 }
 
 const styles = StyleSheet.create({

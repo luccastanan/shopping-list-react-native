@@ -4,25 +4,7 @@ import { Product } from "../models";
 
 const INITIAL_STATE = {
     current: [],
-    possible: [
-        new Product('Arroz'),
-        new Product('Feijão'),
-        new Product('Chocolate'),
-        new Product('Coxinha'),
-        new Product('Ração'),
-        new Product('QBoa'),
-        new Product('Frango'),
-        new Product('Bolo'),
-        new Product('Alface'),
-        new Product('Tomate'),
-        new Product('Nutella'),
-        new Product('Água'),
-        new Product('Halls'),
-        new Product('Margarina'),
-        new Product('Presunto'),
-        new Product('Queijo'),
-        new Product('Pasta de dente')
-    ]
+    possible: []
 };
 
 const productReducer = (state = INITIAL_STATE, action) => {

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "515832928651",
+    "firebase_url": "https://shopping-list-react-native.firebaseio.com",
+    "project_id": "shopping-list-react-native",
+    "storage_bucket": "shopping-list-react-native.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515832928651:android:989663de37046f24",
+        "android_client_info": {
+          "package_name": "com.testredux"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515832928651-2sbsoig276u07reeh49mr9df75ob4tcm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.testredux",
+            "certificate_hash": "018b6ab018b958102c5df9731082740ec507125b"
+          }
+        },
+        {
+          "client_id": "515832928651-havdg3ssrvk516a25gc1thu787q9ofrm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeDSOPve4ZxN9eGDCmnv3xLC_ctm_Kepc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515832928651-havdg3ssrvk516a25gc1thu787q9ofrm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
