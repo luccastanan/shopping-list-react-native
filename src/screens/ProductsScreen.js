@@ -12,7 +12,8 @@ import { bindActionCreators } from 'redux';
 import { Icon } from 'react-native-elements';
 import { addProduct, registerProduct } from '../actions/ProductsActions';
 import { ProductList, FAB, InputDialog } from '../components';
-import { Product } from "../models";
+import { Product } from '../models';
+import { LIGHT_GRAY } from '../styles/Colors';
 
 class ProductsScreen extends Component {
     state = {
@@ -23,11 +24,14 @@ class ProductsScreen extends Component {
         return (
             <View style={styles.container}>
                 <ProductList
+                    card
                     data={this.props.products.possible}
                     itemSelected={(item, index) => this.props.addProduct(index)}
+                    iconType='entypo'
+                    iconName='plus'
                 />
                 <FAB
-                    type="font-awesome"
+                    type="entypo"
                     name="plus"
                     onPress={() => this.setState({ dialogVisible: true })}
                 />
@@ -56,8 +60,9 @@ class ProductsScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        justifyContent: 'center'
+        backgroundColor: LIGHT_GRAY,
+        justifyContent: 'center',
+        padding:16
     },
     item: {
         borderBottomColor: '#e0e0e0',

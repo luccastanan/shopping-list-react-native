@@ -4,31 +4,55 @@ import {
     StyleSheet,
     Text,
     View,
-    Button,
     FlatList,
     TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Icon } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import { cleanProducts, removeProduct } from '../actions/ProductsActions';
 import { bindActionCreators } from 'redux';
 import { ProductList, FAB } from '../components';
+import {
+    LIGHT_GRAY,
+    LIGHT_GREEN,
+    LIGHT_BLUE,
+    LIGHT_RED,
+    WHITE
+} from '../styles/Colors';
 
 class HomeScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text>Nós temos {this.props.products.current.length}</Text>
+                {this.props.products.current.length > 0 && (
+                    <Text style={{ fontSize: 16, marginBottom: 8 }}>
+                        Você precisa comprar{' '}
+                        {this.props.products.current.length}{' '}
+                        {this.props.products.current.length != 1
+                            ? 'produtos'
+                            : 'produto'}
+                    </Text>
+                )}
                 <ProductList
+                    card
                     data={this.props.products.current}
+                    iconType='entypo'
+                    iconName='trash'
                     itemSelected={(item, index) =>
                         this.props.removeProduct(index)
                     }
+                    emptyText='Nada para comprar'
                 />
-                <FAB
-                    type="font-awesome"
-                    name="list"
+                <Button
+                    title="ADICIONAR PRODUTO"
                     onPress={() => this.props.navigation.navigate('Products')}
+                    buttonStyle={{
+                        borderRadius: 50,
+                        height: 50,
+                        backgroundColor: LIGHT_RED
+                    }}
+                    containerStyle={{ marginTop: 16 }}
+                    raised
                 />
             </View>
         );
@@ -38,7 +62,8 @@ class HomeScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: LIGHT_GRAY,
+        padding: 16
     },
     item: {
         borderBottomColor: '#e0e0e0',
