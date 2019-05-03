@@ -9,7 +9,11 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Button } from 'react-native-elements';
-import { cleanProducts, removeProduct } from '../actions/ProductsActions';
+import {
+    cleanProducts,
+    removeProduct,
+    registerProduct
+} from '../actions/ProductsActions';
 import { bindActionCreators } from 'redux';
 import { ProductList, FAB } from '../components';
 import {
@@ -26,18 +30,12 @@ import { Product } from '../models';
 class HomeScreen extends Component {
     constructor() {
         super();
-        this.state = {
-            products: [],
-            loading: false
-        };
-
         this.ref = firebase.firestore().collection('products');
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text>{this.state.products.length}</Text>
                 {this.props.products.current.length > 0 && (
                     <Text style={{ fontSize: 16, marginBottom: 8 }}>
                         Você precisa comprar{' '}
@@ -74,27 +72,17 @@ class HomeScreen extends Component {
 
     componentDidMount() {
         this.unsubscribe = this.ref.onSnapshot(querySnapshot => {
-            const products = [];
             querySnapshot.forEach(doc => {
-                products.push(new Product(doc.data().name, doc.data().price));
+                this.props.registerProduct(
+                    new Product(doc.data().name, doc.data().price)
+                );
             });
-            this.setState({
-                products,
-                loading: false
-            })
         });
     }
 
     componentWillUnmount() {
         this.unsubscribe();
     }
-
-    onCollectionUpdate = querySnapshot => {
-        const products = [];
-        querySnapshot.forEach(doc => {
-            console.log(JSON.stringify(doc));
-        });
-    };
 }
 
 const styles = StyleSheet.create({
@@ -121,7 +109,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ cleanProducts, removeProduct }, dispatch);
+    bindActionCreators({ cleanProducts, removeProduct, registerProduct }, dispatch);
 
 export default connect(
     mapStateToProps,
