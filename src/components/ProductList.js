@@ -7,20 +7,24 @@ import {
     TouchableOpacity
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { GREEN } from '../styles/Colors';
+import { GREEN, LIGHT_GRAY, WHITE, LIGHT_GREEN, LIGHT_RED } from '../styles/Colors';
+import styles from "../styles";
 
 class ProductList extends Component {
     render() {
         return (
-            <View style={styles.container}>
-                <View style={this.props.card ? styles.card : ''}>
+            <View style={localStyles.container}>
+                <View style={localStyles.card}>
                     <FlatList
                         data={this.props.data}
                         renderItem={({ item, index }) => (
                             <View>
-                                <View style={styles.item}>
-                                    <Text style={styles.btnTitle}>
+                                <View style={localStyles.item}>
+                                    <Text style={localStyles.title}>
                                         {item.name}
+                                    </Text>
+                                    <Text style={localStyles.price}>
+                                        {'R$' + item.price}
                                     </Text>
                                     <TouchableOpacity
                                         onPress={() =>
@@ -41,7 +45,10 @@ class ProductList extends Component {
                             </View>
                         )}
                         keyExtractor={(item, index) => index.toString()}
-                        style={[this.props.style ? this.props.style : '']}
+                        style={[this.props.style ? this.props.style : {}]}
+                        contentContainerStyle={
+                            this.props.contentContainerStyle ? this.props.contentContainerStyle : {}
+                        }
                     />
                 </View>
                 {this.props.data.length == 0 && (
@@ -63,7 +70,7 @@ class ProductList extends Component {
     }
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         flex: 1
@@ -73,20 +80,24 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center'
     },
-    btnTitle: {
+    title: {
         fontWeight: 'bold',
         margin: 16,
         textAlign: 'center',
-        flex: 1
+        flex: 1,
+        fontSize:18
+    },
+    price: {
+        fontWeight:'bold',
+        textAlign: 'center',
+        borderRadius:15,
+        color:LIGHT_RED,
+        padding:2
     },
     card: {
-        borderRadius: 15,
-        elevation: 5,
-        backgroundColor: '#fff'
-    },
-    horizontalLine: {
-        borderBottomColor: '#e0e0e0',
-        borderBottomWidth: 1
+        //borderRadius: 15,
+        //borderWidth: 2,
+        //borderColor: LIGHT_GRAY,
     }
 });
 

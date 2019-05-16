@@ -8,18 +8,19 @@
 
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import ProductsReducer from './src/reducers/ProductsReducer';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import reducers from './src/reducers';
 import AppNavigator from './AppNavigator';
+//import createStore from './createStore';
 
-const store = createStore(ProductsReducer, applyMiddleware());
+const store = createStore(reducers, applyMiddleware());
+//const store = createStore()
 
 export default class App extends Component {
-    
     render() {
         return (
             <Provider store={store}>
-                <AppNavigator/>
+                <AppNavigator />
             </Provider>
         );
     }

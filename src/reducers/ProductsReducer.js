@@ -1,13 +1,11 @@
-import { combineReducers } from 'redux';
-import { ADD_PRODUCT, REMOVE_PRODUCT, CLEAN_PRODUCTS, REGISTER_PRODUCT } from '../../types';
-import { Product } from "../models";
+import { ADD_PRODUCT, REMOVE_PRODUCT, REGISTER_PRODUCT, CLEAN_PRODUCTS } from "../types/ProductTypes";
 
 const INITIAL_STATE = {
     current: [],
     possible: []
 };
 
-const productReducer = (state = INITIAL_STATE, action) => {
+export default (state = INITIAL_STATE, action) => {
     let { current, possible } = state;
 
     const arraySort = (a, b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0
@@ -23,8 +21,10 @@ const productReducer = (state = INITIAL_STATE, action) => {
             possible.sort(arraySort)
             return { current, possible };
         case REGISTER_PRODUCT:
-            possible.push(action.payload.product);
-            possible.sort(arraySort)
+            if(possible.filter(prod => prod.name === action.payload.product.name).length == 0 && current.filter(prod => prod.name === action.payload.product.name).length == 0) {
+                possible.push(action.payload.product);
+                possible.sort(arraySort)
+            }
             return {current ,possible}
         case CLEAN_PRODUCTS:
             possible.push(...current);
@@ -35,7 +35,3 @@ const productReducer = (state = INITIAL_STATE, action) => {
             return state;
     }
 };
-
-export default combineReducers({
-    products: productReducer
-});

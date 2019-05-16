@@ -5,79 +5,112 @@ import {
     Text,
     View,
     FlatList,
-    TouchableOpacity
+    TouchableOpacity,
+    Dimensions,
+    ImageBackground
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Button } from 'react-native-elements';
+import { Button, Image } from 'react-native-elements';
 import {
     cleanProducts,
     removeProduct,
     registerProduct
 } from '../actions/ProductsActions';
 import { bindActionCreators } from 'redux';
-import { ProductList, FAB } from '../components';
+import { ProductList, FAB, ActionButton, Container } from '../components';
 import {
     LIGHT_GRAY,
     LIGHT_GREEN,
     LIGHT_BLUE,
     LIGHT_RED,
-    WHITE
+    WHITE,
+    GREEN
 } from '../styles/Colors';
+
+import styles from '../styles';
 
 import firebase from 'react-native-firebase';
 import { Product } from '../models';
 
 class HomeScreen extends Component {
-    constructor() {
-        super();
-        this.ref = firebase.firestore().collection('products');
+    constructor(props) {
+        super(props);
+        this.refUser = firebase
+            .firestore()
+            .collection('users')
+            .doc(props.navigation.getParam('uid', ''));
     }
 
     render() {
         return (
-            <View style={styles.container}>
-                {this.props.products.current.length > 0 && (
-                    <Text style={{ fontSize: 16, marginBottom: 8 }}>
-                        Você precisa comprar{' '}
-                        {this.props.products.current.length}{' '}
-                        {this.props.products.current.length != 1
-                            ? 'produtos'
-                            : 'produto'}
-                    </Text>
-                )}
+            <Container noPadding>
                 <ProductList
-                    card
                     data={this.props.products.current}
-                    iconType="entypo"
-                    iconName="trash"
+                    iconType="evil-icons"
+                    iconName="close"
                     itemSelected={(item, index) =>
                         this.props.removeProduct(index)
                     }
                     emptyText="Nada para comprar"
+                    contentContainerStyle={{ paddingStart: 16, paddingEnd: 16 }}
                 />
-                <Button
-                    title="ADICIONAR PRODUTO"
-                    onPress={() => this.props.navigation.navigate('Products')}
-                    buttonStyle={{
-                        borderRadius: 50,
-                        height: 50,
-                        backgroundColor: LIGHT_RED
-                    }}
-                    containerStyle={{ marginTop: 16 }}
-                    raised
-                />
-            </View>
+                {this.props.products.current.length > 0 && (
+                    <View style={styles.horizontalLine} />
+                )}
+                <View style={localStyles.footer}>
+                    {this.props.products.current.length > 0 &&
+                        this.renderInfo()}
+                    <ActionButton
+                        title="ADICIONAR PRODUTO"
+                        onPress={() =>
+                            this.props.navigation.navigate('Products')
+                        }
+                    />
+                </View>
+            </Container>
         );
     }
 
+    renderInfo = () => {
+        return (
+            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                <Text style={{ fontSize: 16}}>
+                    Total de produtos: {this.props.products.current.length}
+                </Text>
+                <Text style={localStyles.totalPrice}>
+                    {'R$' + this.totalPrice()}
+                </Text>
+            </View>
+        );
+    };
+
+    totalPrice = () =>
+        this.props.products.current
+            .map(prod => prod.price)
+            .reduce((a, b) => a + b, 0);
+
     componentDidMount() {
-        this.unsubscribe = this.ref.onSnapshot(querySnapshot => {
-            querySnapshot.forEach(doc => {
+        this.unsubscribe = this.refUser.onSnapshot(querySnapshot => {
+            console.log('new: ' + JSON.stringify(querySnapshot.data()));
+            if (querySnapshot.data().products) {
+                querySnapshot.data().products.forEach(prod => {
+                    this.props.registerProduct(new Product(prod, 5));
+                });
+            }
+            /*querySnapshot.forEach(doc => {
+                console.log(JSON.stringify(doc.data()));
                 this.props.registerProduct(
                     new Product(doc.data().name, doc.data().price)
                 );
-            });
+            });*/
         });
+        /*let count = 0
+        setInterval(() => {
+            this.refUser.update({
+                products:firebase.firestore.FieldValue.arrayUnion(`coxinha ${++count}`)
+            })
+        }, 5000)*/
+        //this.unsubscribe = this.refUser.
     }
 
     componentWillUnmount() {
@@ -85,21 +118,10 @@ class HomeScreen extends Component {
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: LIGHT_GRAY,
-        padding: 16
-    },
-    item: {
-        borderBottomColor: '#e0e0e0',
-        borderBottomWidth: 1,
-        justifyContent: 'center'
-    },
-    btnTitle: {
-        fontWeight: 'bold',
-        margin: 16,
-        textAlign: 'center'
+const localStyles = StyleSheet.create({
+    footer: { padding: 16 },
+    totalPrice: {
+        fontSize: 24
     }
 });
 
@@ -109,7 +131,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ cleanProducts, removeProduct, registerProduct }, dispatch);
+    bindActionCreators(
+        { cleanProducts, removeProduct, registerProduct },
+        dispatch
+    );
 
 export default connect(
     mapStateToProps,

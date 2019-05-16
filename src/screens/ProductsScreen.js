@@ -11,28 +11,33 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Icon } from 'react-native-elements';
 import { addProduct, registerProduct } from '../actions/ProductsActions';
-import { ProductList, FAB, InputDialog } from '../components';
+import { ProductList, FAB, InputDialog, ActionButton, Container } from '../components';
 import { Product } from '../models';
 import { LIGHT_GRAY } from '../styles/Colors';
+import styles from '../styles';
+
+import firebase from 'react-native-firebase';
 
 class ProductsScreen extends Component {
-    state = {
-        dialogVisible: false,
-        newProduct: ''
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            dialogVisible: false,
+            newProduct: ''
+        };
+        this.ref = firebase.firestore().collection('products');
+    }
     render() {
         return (
-            <View style={styles.container}>
+            <Container>
                 <ProductList
-                    card
                     data={this.props.products.possible}
                     itemSelected={(item, index) => this.props.addProduct(index)}
-                    iconType='entypo'
-                    iconName='plus'
+                    iconType="entypo"
+                    iconName="plus"
                 />
-                <FAB
-                    type="entypo"
-                    name="plus"
+                <ActionButton
+                    title="Cadastrar produto"
                     onPress={() => this.setState({ dialogVisible: true })}
                 />
                 <InputDialog
@@ -46,23 +51,34 @@ class ProductsScreen extends Component {
                     }}
                     positiveText="Salvar"
                     positivePress={() => {
-                        this.props.registerProduct(
-                            new Product(this.state.newProduct)
-                        );
-                        this.setState({ newProduct: '', dialogVisible: false });
+                        console.log('coxinha1');
+                        if (this.state.newProduct.length > 0) {
+                            this.addProduct();
+                        }
+                        this.setState({
+                            newProduct: '',
+                            dialogVisible: false
+                        });
                     }}
                 />
-            </View>
+            </Container>
         );
     }
+
+    addProduct = () => {
+        this.ref.add({
+            name: this.state.newProduct,
+            price: 0.99
+        });
+    };
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: LIGHT_GRAY,
         justifyContent: 'center',
-        padding:16
+        padding: 16
     },
     item: {
         borderBottomColor: '#e0e0e0',
