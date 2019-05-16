@@ -15,13 +15,23 @@ class InputDialog extends Component {
                         </Dialog.Description>
                     )}
                     <Dialog.Input
-                        value={this.props.value}
-                        onChangeText={this.props.onChangeText}
+                        value={this.props.prodName}
+                        onChangeText={name => this.props.onChangeText(name, this.props.prodPrice)}
                         style={{
                             borderBottomColor: '#e0e0e0',
                             borderBottomWidth: 1
                         }}
                         placeholder='Nome do produto'
+                    />
+                    <Dialog.Input
+                        value={this.props.prodPrice}
+                        onChangeText={price => this.props.onChangeText(this.props.prodName, price)}
+                        style={{
+                            borderBottomColor: '#e0e0e0',
+                            borderBottomWidth: 1
+                        }}
+                        keyboardType='numeric'
+                        placeholder='Preço do produto'
                     />
                     {this.props.negativeText && (
                         <Dialog.Button

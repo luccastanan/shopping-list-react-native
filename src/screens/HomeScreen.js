@@ -63,7 +63,9 @@ class HomeScreen extends Component {
                     <ActionButton
                         title="ADICIONAR PRODUTO"
                         onPress={() =>
-                            this.props.navigation.navigate('Products')
+                            this.props.navigation.navigate('Products', {
+                                uid: this.props.navigation.getParam('uid', '')
+                            })
                         }
                     />
                 </View>
@@ -73,8 +75,13 @@ class HomeScreen extends Component {
 
     renderInfo = () => {
         return (
-            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                <Text style={{ fontSize: 16}}>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}>
+                <Text style={{ fontSize: 16 }}>
                     Total de produtos: {this.props.products.current.length}
                 </Text>
                 <Text style={localStyles.totalPrice}>
@@ -84,33 +91,24 @@ class HomeScreen extends Component {
         );
     };
 
-    totalPrice = () =>
-        this.props.products.current
+    totalPrice = () => {
+        let total = this.props.products.current
             .map(prod => prod.price)
             .reduce((a, b) => a + b, 0);
+        return Number(total).toFixed(2);
+    };
 
     componentDidMount() {
         this.unsubscribe = this.refUser.onSnapshot(querySnapshot => {
             console.log('new: ' + JSON.stringify(querySnapshot.data()));
             if (querySnapshot.data().products) {
                 querySnapshot.data().products.forEach(prod => {
-                    this.props.registerProduct(new Product(prod, 5));
+                    this.props.registerProduct(
+                        new Product(prod.name, prod.price)
+                    );
                 });
             }
-            /*querySnapshot.forEach(doc => {
-                console.log(JSON.stringify(doc.data()));
-                this.props.registerProduct(
-                    new Product(doc.data().name, doc.data().price)
-                );
-            });*/
         });
-        /*let count = 0
-        setInterval(() => {
-            this.refUser.update({
-                products:firebase.firestore.FieldValue.arrayUnion(`coxinha ${++count}`)
-            })
-        }, 5000)*/
-        //this.unsubscribe = this.refUser.
     }
 
     componentWillUnmount() {

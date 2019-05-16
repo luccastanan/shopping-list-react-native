@@ -11,7 +11,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Icon } from 'react-native-elements';
 import { addProduct, registerProduct } from '../actions/ProductsActions';
-import { ProductList, FAB, InputDialog, ActionButton, Container } from '../components';
+import {
+    ProductList,
+    FAB,
+    InputDialog,
+    ActionButton,
+    Container
+} from '../components';
 import { Product } from '../models';
 import { LIGHT_GRAY } from '../styles/Colors';
 import styles from '../styles';
@@ -23,9 +29,13 @@ class ProductsScreen extends Component {
         super(props);
         this.state = {
             dialogVisible: false,
-            newProduct: ''
+            prodName: '',
+            prodPrice: ''
         };
-        this.ref = firebase.firestore().collection('products');
+        this.refUser = firebase
+            .firestore()
+            .collection('users')
+            .doc(props.navigation.getParam('uid', ''));
     }
     render() {
         return (
@@ -43,32 +53,40 @@ class ProductsScreen extends Component {
                 <InputDialog
                     visible={this.state.dialogVisible}
                     title="Novo produto"
-                    value={this.state.newProduct}
-                    onChangeText={text => this.setState({ newProduct: text })}
+                    prodName={this.state.prodName}
+                    prodPrice={this.state.prodPrice}
+                    onChangeText={(name, price) =>
+                        this.setState({ prodName: name, prodPrice: price })
+                    }
                     negativeText="Cancelar"
                     negativePress={() => {
-                        this.setState({ newProduct: '', dialogVisible: false });
+                        this._resetState();
                     }}
-                    positiveText="Salvar"
+                    positiveText="Cadastrar"
                     positivePress={() => {
-                        console.log('coxinha1');
-                        if (this.state.newProduct.length > 0) {
+                        if (this.state.prodName.length > 0 && this.state.prodPrice > 0) {
                             this.addProduct();
                         }
-                        this.setState({
-                            newProduct: '',
-                            dialogVisible: false
-                        });
+                        this._resetState();
                     }}
                 />
             </Container>
         );
     }
 
+    _resetState = () => {
+        this.setState({
+            dialogVisible: false,
+            prodName: '',
+            prodPrice: ''
+        });
+    };
+
     addProduct = () => {
-        this.ref.add({
-            name: this.state.newProduct,
-            price: 0.99
+        this.refUser.update({
+            products: firebase.firestore.FieldValue.arrayUnion(
+                new Product(this.state.prodName, Number(this.state.prodPrice))
+            )
         });
     };
 }
